@@ -2,6 +2,7 @@ package com.example.larica.api.service;
 
 import com.example.larica.api.domain.Categoria;
 import com.example.larica.api.domain.Clima;
+import com.example.larica.api.exception.ResourceNotFoundException;
 import com.example.larica.api.repository.ClimaRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,17 +22,12 @@ public class RecomendacaoService {
     }
 
     public List<Categoria> obterRecomendacoes() {
-        Optional<String> condicaoAtualOpt = climaService.obterCondicaoClimaticaAtual();
+        String condicaoAtual = climaService.obterCondicaoClimaticaAtual()
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível obter a condição climática atual."));
 
-        if (condicaoAtualOpt.isEmpty()) {
-            // Se a API de clima falhar, podemos retornar uma lista padrão ou vazia
-            return Collections.emptyList();
-        }
+        Clima clima = climaRepository.findByCondicao(condicaoAtual)
+                .orElseThrow(() -> new ResourceNotFoundException("Nenhuma categoria encontrada para a condição climática: " + condicaoAtual));
 
-        String condicaoAtual = condicaoAtualOpt.get();
-        Optional<Clima> climaOpt = climaRepository.findByCondicao(condicaoAtual);
-
-        return climaOpt.map(clima -> List.copyOf(clima.getCategorias()))
-                .orElse(Collections.emptyList());
+        return List.copyOf(clima.getCategorias());
     }
 }
