@@ -1,11 +1,16 @@
 package com.example.larica.api.controller;
 
+import com.example.larica.api.dto.CreateRestauranteRequestDTO;
 import com.example.larica.api.dto.RestauranteDTO;
 import com.example.larica.api.service.RestauranteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/restaurantes")
-@Tag(name = "Restaurantes", description = "Endpoints para consultar restaurantes.")
+@Tag(name = "Restaurantes", description = "Endpoints para consultar e gerenciar restaurantes.")
 public class RestauranteController {
 
     private final RestauranteService restauranteService;
@@ -22,13 +27,25 @@ public class RestauranteController {
         this.restauranteService = restauranteService;
     }
 
+    @PostMapping
+    @Operation(summary = "Cria um novo restaurante.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Restaurante criado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos."),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada.")
+    })
+    public ResponseEntity<RestauranteDTO> criarRestaurante(@Valid @RequestBody CreateRestauranteRequestDTO dto) {
+        RestauranteDTO novoRestaurante = restauranteService.criarRestaurante(dto);
+        return new ResponseEntity<>(novoRestaurante, HttpStatus.CREATED);
+    }
+
     @GetMapping
-    @Operation(summary = "Lista todos os restaurantes cadastrados.")
+    @Operation(summary = "Lista todos os restaurantes de forma paginada.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de restaurantes retornada com sucesso.")
     })
-    public ResponseEntity<List<RestauranteDTO>> listarTodos() {
-        return ResponseEntity.ok(restauranteService.listarTodos());
+    public ResponseEntity<Page<RestauranteDTO>> listarTodos(Pageable pageable) {
+        return ResponseEntity.ok(restauranteService.listarTodos(pageable));
     }
 
     @GetMapping("/categoria/{categoriaId}")
