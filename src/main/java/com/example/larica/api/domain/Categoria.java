@@ -1,19 +1,20 @@
 package com.example.larica.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "categoria")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "climas")
+@ToString(exclude = "climas")
 public class Categoria {
 
     @Id
@@ -35,5 +36,6 @@ public class Categoria {
             joinColumns = @JoinColumn(name = "categoria_id"),
             inverseJoinColumns = @JoinColumn(name = "clima_id")
     )
+    @JsonManagedReference
     private Set<Clima> climas;
 }

@@ -1,19 +1,20 @@
 package com.example.larica.api.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "clima")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "categorias")
+@ToString(exclude = "categorias")
 public class Clima {
 
     @Id
@@ -27,5 +28,6 @@ public class Clima {
     private String descricaoAmigavel;
 
     @ManyToMany(mappedBy = "climas")
+    @JsonBackReference
     private Set<Categoria> categorias;
 }
