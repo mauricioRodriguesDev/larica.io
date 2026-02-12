@@ -31,6 +31,15 @@ INSERT INTO restaurante (id, nome, categoria_id, endereco, rating, ativo) VALUES
 INSERT INTO restaurante (id, nome, categoria_id, endereco, rating, ativo) VALUES
 (4, 'La Boticella', 2, 'R. Jangadeiros, 44 - Ipanema', 4.5, true);
 
+-- Sopas e Caldos (Categoria 1)
+INSERT INTO restaurante (id, nome, categoria_id, endereco, rating, ativo) VALUES
+(5, 'Sopão 95', 1, 'R. Farme de Amoedo, 95 - Ipanema', 4.4, true);
+
+-- Saladas (Categoria 4)
+INSERT INTO restaurante (id, nome, categoria_id, endereco, rating, ativo) VALUES
+(6, 'Delírio Tropical', 4, 'R. Garcia d''Avila, 48 - Ipanema', 4.6, true);
+
+
 -- Inserir Links de Delivery
 -- B de Burger
 INSERT INTO link_delivery (restaurante_id, plataforma, url_destino) VALUES
@@ -44,3 +53,11 @@ INSERT INTO link_delivery (restaurante_id, plataforma, url_destino) VALUES
 -- Polis Sucos
 INSERT INTO link_delivery (restaurante_id, plataforma, url_destino) VALUES
 (3, 'iFood', 'https://www.ifood.com.br/delivery/rio-de-janeiro-rj/polis-sucos-ipanema/');
+
+-- Sopão 95
+INSERT INTO link_delivery (restaurante_id, plataforma, url_destino) VALUES
+(5, 'iFood', 'https://www.ifood.com.br/delivery/rio-de-janeiro-rj/sopao-95-ipanema/');
+
+-- Delírio Tropical
+INSERT INTO link_delivery (restaurante_id, plataforma, url_destino) VALUES
+(6, 'iFood', 'https://www.ifood.com.br/delivery/rio-de-janeiro-rj/delirio-tropical-ipanema/');
