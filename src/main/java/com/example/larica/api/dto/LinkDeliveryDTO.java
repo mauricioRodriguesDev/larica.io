@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class LinkDeliveryDTO {
-    private Integer id;
+    private Long id; // Refatorado para Long
     private String plataforma;
     private String urlDestino;
 }

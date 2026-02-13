@@ -17,7 +17,7 @@ public class CreateRestauranteRequestDTO {
 
     @NotNull(message = "O ID da categoria é obrigatório.")
     @Positive(message = "O ID da categoria deve ser um número positivo.")
-    private Integer categoriaId;
+    private Long categoriaId; // Refatorado para Long
 
     private String endereco;
 

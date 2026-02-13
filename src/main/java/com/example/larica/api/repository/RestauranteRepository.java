@@ -1,12 +1,12 @@
 package com.example.larica.api.repository;
 
 import com.example.larica.api.domain.Restaurante;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface RestauranteRepository extends JpaRepository<Restaurante, Integer> {
-    List<Restaurante> findByCategoriaId(Integer categoriaId);
+public interface RestauranteRepository extends JpaRepository<Restaurante, Long> { // Refatorado para Long
+    Page<Restaurante> findByCategoriaId(Long categoriaId, Pageable pageable); // Refatorado para Long
 }

@@ -14,9 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class RestauranteService {
 
@@ -47,26 +44,18 @@ public class RestauranteService {
     }
 
     @Transactional
-    public RestauranteDTO atualizarRestaurante(Integer id, UpdateRestauranteDTO dto) {
+    public RestauranteDTO atualizarRestaurante(Long id, UpdateRestauranteDTO dto) { // Refatorado para Long
         Restaurante restaurante = restauranteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurante com ID " + id + " não encontrado."));
 
-        if (dto.getNome() != null) {
-            restaurante.setNome(dto.getNome());
-        }
-        if (dto.getEndereco() != null) {
-            restaurante.setEndereco(dto.getEndereco());
-        }
-        if (dto.getRating() != null) {
-            restaurante.setRating(dto.getRating());
-        }
+        updateRestauranteData(restaurante, dto);
 
         Restaurante restauranteAtualizado = restauranteRepository.save(restaurante);
         return restauranteMapper.toDTO(restauranteAtualizado);
     }
 
     @Transactional
-    public void deletarRestaurante(Integer id) {
+    public void deletarRestaurante(Long id) { // Refatorado para Long
         if (!restauranteRepository.existsById(id)) {
             throw new ResourceNotFoundException("Restaurante com ID " + id + " não encontrado.");
         }
@@ -80,9 +69,20 @@ public class RestauranteService {
     }
 
     @Transactional(readOnly = true)
-    public List<RestauranteDTO> listarPorCategoria(Integer categoriaId) {
-        return restauranteRepository.findByCategoriaId(categoriaId).stream()
-                .map(restauranteMapper::toDTO)
-                .collect(Collectors.toList());
+    public Page<RestauranteDTO> listarPorCategoria(Long categoriaId, Pageable pageable) { // Refatorado para Long
+        return restauranteRepository.findByCategoriaId(categoriaId, pageable)
+                .map(restauranteMapper::toDTO);
+    }
+
+    private void updateRestauranteData(Restaurante restaurante, UpdateRestauranteDTO dto) {
+        if (dto.getNome() != null) {
+            restaurante.setNome(dto.getNome());
+        }
+        if (dto.getEndereco() != null) {
+            restaurante.setEndereco(dto.getEndereco());
+        }
+        if (dto.getRating() != null) {
+            restaurante.setRating(dto.getRating());
+        }
     }
 }

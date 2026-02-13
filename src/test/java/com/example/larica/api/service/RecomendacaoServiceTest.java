@@ -40,7 +40,7 @@ class RecomendacaoServiceTest {
         // Arrange
         String condicaoClimatica = "Rain";
         PeriodoDia periodo = PeriodoDia.NOITE;
-        Categoria sopa = Categoria.builder().id(1).nome("Sopas e Caldos").build();
+        Categoria sopa = Categoria.builder().id(1L).nome("Sopas e Caldos").build();
         Recomendacao recomendacao = new Recomendacao(1L, sopa, null, periodo);
 
         when(climaService.obterCondicaoClimaticaAtual()).thenReturn(Optional.of(condicaoClimatica));

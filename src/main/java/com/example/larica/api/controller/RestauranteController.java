@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/restaurantes")
 @Tag(name = "Restaurantes", description = "Endpoints para consultar e gerenciar restaurantes.")
@@ -47,7 +45,7 @@ public class RestauranteController {
             @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos."),
             @ApiResponse(responseCode = "404", description = "Restaurante não encontrado.")
     })
-    public ResponseEntity<RestauranteDTO> atualizarRestaurante(@PathVariable Integer id, @Valid @RequestBody UpdateRestauranteDTO dto) {
+    public ResponseEntity<RestauranteDTO> atualizarRestaurante(@PathVariable Long id, @Valid @RequestBody UpdateRestauranteDTO dto) { // Refatorado para Long
         RestauranteDTO restauranteAtualizado = restauranteService.atualizarRestaurante(id, dto);
         return ResponseEntity.ok(restauranteAtualizado);
     }
@@ -58,7 +56,7 @@ public class RestauranteController {
             @ApiResponse(responseCode = "204", description = "Restaurante deletado com sucesso."),
             @ApiResponse(responseCode = "404", description = "Restaurante não encontrado.")
     })
-    public ResponseEntity<Void> deletarRestaurante(@PathVariable Integer id) {
+    public ResponseEntity<Void> deletarRestaurante(@PathVariable Long id) { // Refatorado para Long
         restauranteService.deletarRestaurante(id);
         return ResponseEntity.noContent().build();
     }
@@ -73,16 +71,11 @@ public class RestauranteController {
     }
 
     @GetMapping("/categoria/{categoriaId}")
-    @Operation(summary = "Lista todos os restaurantes de uma categoria específica.")
+    @Operation(summary = "Lista todos os restaurantes de uma categoria específica de forma paginada.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de restaurantes retornada com sucesso."),
-            @ApiResponse(responseCode = "204", description = "Nenhum restaurante encontrado para esta categoria.")
+            @ApiResponse(responseCode = "200", description = "Lista de restaurantes retornada com sucesso.")
     })
-    public ResponseEntity<List<RestauranteDTO>> listarPorCategoria(@PathVariable Integer categoriaId) {
-        List<RestauranteDTO> restaurantes = restauranteService.listarPorCategoria(categoriaId);
-        if (restaurantes.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(restaurantes);
+    public ResponseEntity<Page<RestauranteDTO>> listarPorCategoria(@PathVariable Long categoriaId, Pageable pageable) { // Refatorado para Long
+        return ResponseEntity.ok(restauranteService.listarPorCategoria(categoriaId, pageable));
     }
 }

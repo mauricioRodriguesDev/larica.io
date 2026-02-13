@@ -19,7 +19,7 @@ public class Clima {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id; // Refatorado para Long
 
     @Column(nullable = false, unique = true, length = 50)
     private String condicao;

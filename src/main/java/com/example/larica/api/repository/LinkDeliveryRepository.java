@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LinkDeliveryRepository extends JpaRepository<LinkDelivery, Integer> {
+public interface LinkDeliveryRepository extends JpaRepository<LinkDelivery, Long> { // Refatorado para Long
 }

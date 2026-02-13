@@ -7,10 +7,10 @@ import java.util.List;
 
 @Data
 public class RestauranteDTO {
-    private Integer id;
+    private Long id; // Refatorado para Long
     private String nome;
     private String endereco;
     private BigDecimal rating;
-    private Integer categoriaId;
+    private Long categoriaId; // Refatorado para Long
     private List<LinkDeliveryDTO> links;
 }

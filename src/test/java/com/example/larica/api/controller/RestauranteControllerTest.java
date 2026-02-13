@@ -4,23 +4,24 @@ import com.example.larica.api.domain.Categoria;
 import com.example.larica.api.dto.CreateRestauranteRequestDTO;
 import com.example.larica.api.repository.CategoriaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+import static org.hamcrest.Matchers.containsString;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional // Garante que cada teste rode em uma transação que será revertida
+@Sql(scripts = "/test-data/clean-db.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class RestauranteControllerTest {
 
     @Autowired
@@ -32,23 +33,14 @@ class RestauranteControllerTest {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-    private Categoria categoriaSalva;
-
-    @BeforeEach
-    void setup() {
-        // Arrange: Cria uma categoria que pode ser usada por todos os testes
-        // Como cada teste é transacional, esta categoria será recriada a cada vez.
-        Categoria categoria = Categoria.builder().nome("Teste Categoria").build();
-        categoriaSalva = categoriaRepository.save(categoria);
-    }
-
     @Test
     @DisplayName("Deve retornar 201 Created ao criar um restaurante com dados válidos")
     void criarRestaurante_ComDadosValidos_Retorna201() throws Exception {
         // Arrange
+        Categoria categoria = categoriaRepository.save(Categoria.builder().nome("Categoria para Teste").build());
         CreateRestauranteRequestDTO novoRestauranteDTO = new CreateRestauranteRequestDTO();
         novoRestauranteDTO.setNome("Restaurante Teste");
-        novoRestauranteDTO.setCategoriaId(categoriaSalva.getId()); // Usa o ID da categoria que acabamos de salvar
+        novoRestauranteDTO.setCategoriaId(categoria.getId());
         novoRestauranteDTO.setEndereco("Rua de Teste, 123");
         novoRestauranteDTO.setRating(new BigDecimal("4.5"));
 
@@ -67,9 +59,10 @@ class RestauranteControllerTest {
     @DisplayName("Deve retornar 400 Bad Request ao tentar criar um restaurante com nome em branco")
     void criarRestaurante_ComNomeEmBranco_Retorna400() throws Exception {
         // Arrange
+        Categoria categoria = categoriaRepository.save(Categoria.builder().nome("Categoria para Teste 2").build());
         CreateRestauranteRequestDTO novoRestauranteDTO = new CreateRestauranteRequestDTO();
-        novoRestauranteDTO.setNome(""); // Dado inválido
-        novoRestauranteDTO.setCategoriaId(categoriaSalva.getId());
+        novoRestauranteDTO.setNome("");
+        novoRestauranteDTO.setCategoriaId(categoria.getId());
 
         String jsonBody = objectMapper.writeValueAsString(novoRestauranteDTO);
 
@@ -78,7 +71,7 @@ class RestauranteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBody))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.nome").exists()); // Apenas checa se o erro no campo 'nome' existe
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", containsString("nome: O nome não pode ser vazio.")));
     }
 
     @Test
@@ -87,7 +80,7 @@ class RestauranteControllerTest {
         // Arrange
         CreateRestauranteRequestDTO novoRestauranteDTO = new CreateRestauranteRequestDTO();
         novoRestauranteDTO.setNome("Restaurante Fantasma");
-        novoRestauranteDTO.setCategoriaId(999); // ID de categoria que não existe
+        novoRestauranteDTO.setCategoriaId(999L);
 
         String jsonBody = objectMapper.writeValueAsString(novoRestauranteDTO);
 
