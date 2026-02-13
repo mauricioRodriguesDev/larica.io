@@ -4,6 +4,7 @@ import com.example.larica.api.domain.Categoria;
 import com.example.larica.api.domain.Restaurante;
 import com.example.larica.api.dto.CreateRestauranteRequestDTO;
 import com.example.larica.api.dto.RestauranteDTO;
+import com.example.larica.api.dto.UpdateRestauranteDTO;
 import com.example.larica.api.exception.ResourceNotFoundException;
 import com.example.larica.api.mapper.RestauranteMapper;
 import com.example.larica.api.repository.CategoriaRepository;
@@ -43,6 +44,33 @@ public class RestauranteService {
 
         Restaurante novoRestaurante = restauranteRepository.save(restaurante);
         return restauranteMapper.toDTO(novoRestaurante);
+    }
+
+    @Transactional
+    public RestauranteDTO atualizarRestaurante(Integer id, UpdateRestauranteDTO dto) {
+        Restaurante restaurante = restauranteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurante com ID " + id + " não encontrado."));
+
+        if (dto.getNome() != null) {
+            restaurante.setNome(dto.getNome());
+        }
+        if (dto.getEndereco() != null) {
+            restaurante.setEndereco(dto.getEndereco());
+        }
+        if (dto.getRating() != null) {
+            restaurante.setRating(dto.getRating());
+        }
+
+        Restaurante restauranteAtualizado = restauranteRepository.save(restaurante);
+        return restauranteMapper.toDTO(restauranteAtualizado);
+    }
+
+    @Transactional
+    public void deletarRestaurante(Integer id) {
+        if (!restauranteRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Restaurante com ID " + id + " não encontrado.");
+        }
+        restauranteRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)

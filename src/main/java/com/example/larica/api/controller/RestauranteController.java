@@ -2,6 +2,7 @@ package com.example.larica.api.controller;
 
 import com.example.larica.api.dto.CreateRestauranteRequestDTO;
 import com.example.larica.api.dto.RestauranteDTO;
+import com.example.larica.api.dto.UpdateRestauranteDTO;
 import com.example.larica.api.service.RestauranteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,6 +38,29 @@ public class RestauranteController {
     public ResponseEntity<RestauranteDTO> criarRestaurante(@Valid @RequestBody CreateRestauranteRequestDTO dto) {
         RestauranteDTO novoRestaurante = restauranteService.criarRestaurante(dto);
         return new ResponseEntity<>(novoRestaurante, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um restaurante existente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Restaurante atualizado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos."),
+            @ApiResponse(responseCode = "404", description = "Restaurante não encontrado.")
+    })
+    public ResponseEntity<RestauranteDTO> atualizarRestaurante(@PathVariable Integer id, @Valid @RequestBody UpdateRestauranteDTO dto) {
+        RestauranteDTO restauranteAtualizado = restauranteService.atualizarRestaurante(id, dto);
+        return ResponseEntity.ok(restauranteAtualizado);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um restaurante existente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Restaurante deletado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Restaurante não encontrado.")
+    })
+    public ResponseEntity<Void> deletarRestaurante(@PathVariable Integer id) {
+        restauranteService.deletarRestaurante(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
