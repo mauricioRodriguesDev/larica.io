@@ -1,9 +1,10 @@
 package com.example.larica.api.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,8 +14,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "climas")
-@ToString(exclude = "climas")
+@EqualsAndHashCode(of = "id")
 public class Categoria {
 
     @Id
@@ -30,12 +30,7 @@ public class Categoria {
     @Column(name = "imagem_url", length = 255)
     private String imagemUrl;
 
-    @ManyToMany
-    @JoinTable(
-            name = "categoria_clima",
-            joinColumns = @JoinColumn(name = "categoria_id"),
-            inverseJoinColumns = @JoinColumn(name = "clima_id")
-    )
-    @JsonManagedReference
-    private Set<Clima> climas;
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // Ignoramos para evitar loops na serialização
+    private Set<Recomendacao> recomendacoes = new HashSet<>();
 }

@@ -1,9 +1,10 @@
 package com.example.larica.api.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,8 +14,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "categorias")
-@ToString(exclude = "categorias")
+@EqualsAndHashCode(of = "id")
 public class Clima {
 
     @Id
@@ -27,7 +27,7 @@ public class Clima {
     @Column(name = "descricao_amigavel", length = 100)
     private String descricaoAmigavel;
 
-    @ManyToMany(mappedBy = "climas")
-    @JsonBackReference
-    private Set<Categoria> categorias;
+    @OneToMany(mappedBy = "clima", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Recomendacao> recomendacoes = new HashSet<>();
 }

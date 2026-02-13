@@ -1,33 +1,41 @@
 package com.example.larica.api.service;
 
 import com.example.larica.api.domain.Categoria;
-import com.example.larica.api.domain.Clima;
+import com.example.larica.api.domain.PeriodoDia;
+import com.example.larica.api.domain.Recomendacao;
 import com.example.larica.api.exception.ResourceNotFoundException;
-import com.example.larica.api.repository.ClimaRepository;
+import com.example.larica.api.repository.RecomendacaoRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RecomendacaoService {
 
     private final ClimaService climaService;
-    private final ClimaRepository climaRepository;
+    private final RecomendacaoRepository recomendacaoRepository;
 
-    public RecomendacaoService(ClimaService climaService, ClimaRepository climaRepository) {
+    public RecomendacaoService(ClimaService climaService, RecomendacaoRepository recomendacaoRepository) {
         this.climaService = climaService;
-        this.climaRepository = climaRepository;
+        this.recomendacaoRepository = recomendacaoRepository;
     }
 
     public List<Categoria> obterRecomendacoes() {
         String condicaoAtual = climaService.obterCondicaoClimaticaAtual()
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi possível obter a condição climática atual."));
 
-        Clima clima = climaRepository.findByCondicao(condicaoAtual)
-                .orElseThrow(() -> new ResourceNotFoundException("Nenhuma categoria encontrada para a condição climática: " + condicaoAtual));
+        PeriodoDia periodoAtual = PeriodoDia.agora();
 
-        return List.copyOf(clima.getCategorias());
+        List<Recomendacao> recomendacoes = recomendacaoRepository.findByClimaCondicaoAndPeriodoDia(condicaoAtual, periodoAtual);
+
+        if (recomendacoes.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhuma recomendação encontrada para o clima '" + condicaoAtual + "' e período '" + periodoAtual + "'.");
+        }
+
+        return recomendacoes.stream()
+                .map(Recomendacao::getCategoria)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
