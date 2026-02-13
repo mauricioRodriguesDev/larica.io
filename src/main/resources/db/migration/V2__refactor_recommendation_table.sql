@@ -1,15 +1,12 @@
--- 1. Adicionar a nova coluna de período do dia
-ALTER TABLE categoria_clima ADD COLUMN periodo_dia VARCHAR(255);
+-- Remove a tabela antiga, que era a tabela de junção do ManyToMany
+DROP TABLE IF EXISTS categoria_clima;
 
--- 2. Preencher a nova coluna com um valor padrão (ex: NOITE) para os dados existentes
-UPDATE categoria_clima SET periodo_dia = 'NOITE';
-
--- 3. Tornar a nova coluna não nula
-ALTER TABLE categoria_clima ALTER COLUMN periodo_dia SET NOT NULL;
-
--- 4. Renomear a tabela
-ALTER TABLE categoria_clima RENAME TO recomendacao;
-
--- 5. Adicionar uma coluna de ID e torná-la a chave primária
-ALTER TABLE recomendacao DROP CONSTRAINT categoria_clima_pkey;
-ALTER TABLE recomendacao ADD COLUMN id BIGSERIAL PRIMARY KEY;
+-- Recria a tabela com o novo nome e a estrutura correta desde o início
+CREATE TABLE recomendacao (
+    id BIGSERIAL PRIMARY KEY,
+    categoria_id INT NOT NULL,
+    clima_id INT NOT NULL,
+    periodo_dia VARCHAR(255) NOT NULL,
+    FOREIGN KEY (categoria_id) REFERENCES categoria(id),
+    FOREIGN KEY (clima_id) REFERENCES clima(id)
+);
