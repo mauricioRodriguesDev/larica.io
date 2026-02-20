@@ -9,6 +9,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # Adiciona um serviço de banco de dados que roda em um container Docker
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: larica_db
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+        ports:
+          - 5432:5432
+        # Health check para garantir que o banco está pronto antes de iniciar os testes
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout repository
@@ -21,8 +38,12 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
-
-      - name: Run Unit Tests
-        run: mvn test
+      - name: Build and Test with Maven
+        # Passa as credenciais do banco de dados como variáveis de ambiente para o Maven
+        # O Spring Boot irá automaticamente pegá-las e sobrescrever o application.properties
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/larica_db
+          SPRING_DATASOURCE_USERNAME: testuser
+          SPRING_DATASOURCE_PASSWORD: testpassword
+          OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
+        run: mvn -B clean install
