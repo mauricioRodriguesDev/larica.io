@@ -38,7 +38,6 @@ public class ClimaService {
                 return Optional.of(response.getWeather().get(0).getMain());
             }
         } catch (Exception e) {
-            // Logar o erro em um cenário real
             System.err.println("Erro ao buscar dados do clima: " + e.getMessage());
         }
         return Optional.empty();

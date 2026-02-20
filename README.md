@@ -2,98 +2,71 @@
 
 ![Java CI with Maven](https://github.com/mauricioRodriguesDev/larica.io/actions/workflows/build.yml/badge.svg)
 
-**Larica.io** é o backend de um agregador de descoberta de comida focado em resolver o clássico problema da "paralisia de escolha". A API atua como um curador inteligente, sugerindo categorias de comida que combinam com o clima atual e o período do dia.
+Projeto de backend para um agregador de descoberta de comida, desenvolvido com foco em boas práticas de engenharia de software, escalabilidade e manutenibilidade. A API atua como um curador inteligente, sugerindo categorias de comida com base em fatores contextuais como clima e período do dia.
 
-## 🚀 Funcionalidades Principais
+Este projeto foi construído como um estudo de caso prático, demonstrando a aplicação de uma stack de tecnologia moderna e a implementação de um fluxo de desenvolvimento profissional.
 
-- **Recomendações Inteligentes**: O endpoint principal (`/api/v1/recomendacoes`) consulta uma API de clima externa (OpenWeatherMap) e, com base no clima atual (ex: "Chuva") e no período do dia (ex: "NOITE"), sugere categorias de comida apropriadas (ex: "Pizza", "Massas").
-- **Gerenciamento de Restaurantes**: API REST completa para gerenciar restaurantes, incluindo operações de Criar, Ler, Atualizar e Deletar (CRUD).
-- **Paginação**: As listas de restaurantes são paginadas para garantir performance e escalabilidade.
-- **Validação de Dados**: A entrada de dados é validada para garantir a integridade e a qualidade das informações no banco de dados.
-- **Tratamento de Erros Centralizado**: Respostas de erro padronizadas e informativas para uma melhor experiência de desenvolvimento.
+## ✨ Decisões de Arquitetura e Boas Práticas
+
+- **API RESTful**: Design de API seguindo os princípios REST para a manipulação de recursos.
+- **Banco de Dados Relacional com PostgreSQL**: Escolhido pela robustez, confiabilidade e recursos avançados.
+- **Migrações com Flyway**: Garante um versionamento de banco de dados consistente e automatizado entre todos os ambientes.
+- **Injeção de Dependência e Inversão de Controle**: Utilização dos princípios do Spring para um código desacoplado e testável.
+- **Padrão DTO (Data Transfer Object)**: Separação clara entre as entidades de domínio (JPA) e os objetos expostos pela API, com mapeamento automatizado via **MapStruct**.
+- **Tratamento de Exceções Centralizado**: Uso de `@RestControllerAdvice` para criar respostas de erro padronizadas e informativas.
+- **Validação de Dados**: Implementada com `spring-boot-starter-validation` para garantir a integridade dos dados na camada de entrada da API.
+- **Paginação**: Endpoints de listagem utilizam o `Pageable` do Spring Data para garantir performance e escalabilidade.
+- **Segurança de Credenciais**: Chaves de API e outros segredos são carregados a partir de variáveis de ambiente, e não "hard-coded" no código-fonte.
+- **Testes Automatizados**:
+  - **Testes de Unidade**: Foco na lógica de negócio crítica, com dependências mockadas usando **Mockito**.
+  - **Testes de Integração**: Validação do fluxo completo da API (Controller -> Service -> DB) usando **`@SpringBootTest`** e **`MockMvc`**.
+- **CI/CD com GitHub Actions**: Pipeline de integração contínua que compila, testa e valida o projeto a cada `push`, garantindo a estabilidade do código.
 
 ## 🛠️ Stack Tecnológica
 
 - **Linguagem**: Java 17
-- **Framework**: Spring Boot 3.x
-  - **Módulos**: Spring Web, Spring Data JPA, Spring Validation
+- **Framework**: Spring Boot 3.x (Web, Data JPA, Validation)
 - **Banco de Dados**: PostgreSQL
-- **Migrações de Banco**: Flyway
-- **Mapeamento de Objetos**: MapStruct
-- **Documentação da API**: Springdoc (Swagger UI)
-- **Build & Dependências**: Maven
-- **CI/CD**: GitHub Actions
-
-## ⚙️ Pré-requisitos
-
-Para rodar este projeto localmente, você precisará ter instalado:
-
-- [Java (JDK) 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) ou superior
-- [Apache Maven](https://maven.apache.org/download.cgi)
-- [Docker](https://www.docker.com/products/docker-desktop/) (para rodar o banco de dados PostgreSQL)
+- **Migrações**: Flyway
+- **Testes**: JUnit 5, Mockito
+- **Documentação**: Springdoc (Swagger UI)
+- **Build**: Maven
 
 ## 🏁 Como Rodar o Projeto
 
-1.  **Clone o Repositório**
+1.  **Pré-requisitos**:
+    - Java (JDK) 17+
+    - Maven
+    - Docker
+
+2.  **Clone o Repositório**
     ```bash
     git clone https://github.com/mauricioRodriguesDev/larica.io.git
     cd larica.io
     ```
 
-2.  **Inicie o Banco de Dados com Docker**
-    Execute o comando abaixo no seu terminal para iniciar um container Docker com o PostgreSQL já configurado:
+3.  **Inicie o Banco de Dados com Docker**
     ```bash
     docker run --name larica-postgres -e POSTGRES_PASSWORD=minhasenha -e POSTGRES_DB=larica_db -p 5432:5432 -d postgres
     ```
-    *(**Nota**: Se a porta 5432 já estiver em uso, você pode alterá-la, por exemplo: `-p 5433:5432`)*
 
-3.  **Configure as Variáveis de Ambiente**
-    O projeto precisa de uma chave de API para o serviço OpenWeatherMap.
-
-    - **(Recomendado)** Crie um arquivo na raiz do projeto chamado `.env` e adicione a seguinte linha:
-      ```
-      OPENWEATHERMAP_API_KEY=sua_chave_aqui
-      ```
-      *(O `.gitignore` já está configurado para ignorar este arquivo, mantendo seu segredo seguro).*
-
-    - **(Alternativa)** Você pode alterar diretamente o arquivo `src/main/resources/application.properties`, mas lembre-se de não commitar sua chave.
-
-4.  **Ajuste a Senha do Banco**
-    Verifique se a senha no arquivo `src/main/resources/application.properties` corresponde à que você definiu no comando Docker (`minhasenha` no exemplo acima).
+4.  **Configure as Variáveis de Ambiente**
+    O projeto precisa de uma chave de API para o OpenWeatherMap. A forma mais segura é configurar uma variável de ambiente no seu sistema:
+    ```bash
+    export OPENWEATHERMAP_API_KEY="sua_chave_aqui"
+    ```
+    Além disso, ajuste a senha do banco no arquivo `src/main/resources/application.properties` para corresponder à definida no comando Docker.
     ```properties
     spring.datasource.password=minhasenha
     ```
 
 5.  **Execute a Aplicação**
-    Use o Maven para compilar e rodar o projeto:
     ```bash
     mvn spring-boot:run
     ```
-    A aplicação estará disponível em `http://localhost:8080`.
 
-## 📖 Documentação da API (Swagger)
+## 📖 Documentação da API
 
-Com a aplicação rodando, você pode acessar a documentação interativa da API (Swagger UI) no seguinte endereço:
+Com a aplicação rodando, a documentação interativa da API (Swagger UI) está disponível em:
 
 [**http://localhost:8080/swagger-ui.html**](http://localhost:8080/swagger-ui.html)
-
-A partir desta interface, você pode explorar e testar todos os endpoints disponíveis.
-
-### Principais Endpoints
-
-- `GET /api/v1/recomendacoes`: Retorna uma lista de categorias de comida sugeridas.
-- `GET /api/v1/restaurantes`: Retorna uma lista paginada de todos os restaurantes.
-- `POST /api/v1/restaurantes`: Cria um novo restaurante.
-- `PUT /api/v1/restaurantes/{id}`: Atualiza um restaurante existente.
-- `DELETE /api/v1/restaurantes/{id}`: Deleta um restaurante.
-
-## 🔄 CI/CD com GitHub Actions
-
-Este projeto está configurado com um pipeline de Integração Contínua usando GitHub Actions (`.github/workflows/build.yml`). A cada `push` ou `pull request` para as branches `main` e `develop`, o pipeline irá automaticamente:
-
-1.  Fazer o checkout do código.
-2.  Configurar o ambiente Java 17.
-3.  Compilar o projeto com o Maven.
-4.  Executar todos os testes de unidade e integração.
-
-Isso garante a qualidade e a estabilidade do código antes que ele seja integrado à branch principal.

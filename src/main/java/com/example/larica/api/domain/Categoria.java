@@ -19,7 +19,7 @@ public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Refatorado para Long
+    private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
     private String nome;

@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RestauranteRepository extends JpaRepository<Restaurante, Long> { // Refatorado para Long
-    Page<Restaurante> findByCategoriaId(Long categoriaId, Pageable pageable); // Refatorado para Long
+public interface RestauranteRepository extends JpaRepository<Restaurante, Long> {
+    Page<Restaurante> findByCategoriaId(Long categoriaId, Pageable pageable);
 }

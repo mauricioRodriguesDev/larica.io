@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = "links") // Quebra o ciclo no toString()
+@ToString(exclude = "links")
 public class Restaurante {
 
     @Id

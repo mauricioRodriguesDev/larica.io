@@ -44,7 +44,7 @@ public class RestauranteService {
     }
 
     @Transactional
-    public RestauranteDTO atualizarRestaurante(Long id, UpdateRestauranteDTO dto) { // Refatorado para Long
+    public RestauranteDTO atualizarRestaurante(Long id, UpdateRestauranteDTO dto) {
         Restaurante restaurante = restauranteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurante com ID " + id + " não encontrado."));
 
@@ -55,7 +55,7 @@ public class RestauranteService {
     }
 
     @Transactional
-    public void deletarRestaurante(Long id) { // Refatorado para Long
+    public void deletarRestaurante(Long id) {
         if (!restauranteRepository.existsById(id)) {
             throw new ResourceNotFoundException("Restaurante com ID " + id + " não encontrado.");
         }

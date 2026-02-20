@@ -36,7 +36,6 @@ class RestauranteControllerTest {
     @Test
     @DisplayName("Deve retornar 201 Created ao criar um restaurante com dados válidos")
     void criarRestaurante_ComDadosValidos_Retorna201() throws Exception {
-        // Arrange
         Categoria categoria = categoriaRepository.save(Categoria.builder().nome("Categoria para Teste").build());
         CreateRestauranteRequestDTO novoRestauranteDTO = new CreateRestauranteRequestDTO();
         novoRestauranteDTO.setNome("Restaurante Teste");
@@ -46,7 +45,6 @@ class RestauranteControllerTest {
 
         String jsonBody = objectMapper.writeValueAsString(novoRestauranteDTO);
 
-        // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBody))
@@ -58,7 +56,6 @@ class RestauranteControllerTest {
     @Test
     @DisplayName("Deve retornar 400 Bad Request ao tentar criar um restaurante com nome em branco")
     void criarRestaurante_ComNomeEmBranco_Retorna400() throws Exception {
-        // Arrange
         Categoria categoria = categoriaRepository.save(Categoria.builder().nome("Categoria para Teste 2").build());
         CreateRestauranteRequestDTO novoRestauranteDTO = new CreateRestauranteRequestDTO();
         novoRestauranteDTO.setNome("");
@@ -66,7 +63,6 @@ class RestauranteControllerTest {
 
         String jsonBody = objectMapper.writeValueAsString(novoRestauranteDTO);
 
-        // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBody))
@@ -77,14 +73,12 @@ class RestauranteControllerTest {
     @Test
     @DisplayName("Deve retornar 404 Not Found ao tentar criar um restaurante com categoria inexistente")
     void criarRestaurante_ComCategoriaInexistente_Retorna404() throws Exception {
-        // Arrange
         CreateRestauranteRequestDTO novoRestauranteDTO = new CreateRestauranteRequestDTO();
         novoRestauranteDTO.setNome("Restaurante Fantasma");
         novoRestauranteDTO.setCategoriaId(999L);
 
         String jsonBody = objectMapper.writeValueAsString(novoRestauranteDTO);
 
-        // Act & Assert
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/restaurantes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBody))

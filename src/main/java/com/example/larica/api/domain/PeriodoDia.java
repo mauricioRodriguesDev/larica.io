@@ -20,7 +20,6 @@ public enum PeriodoDia {
     public static PeriodoDia agora() {
         LocalTime agora = LocalTime.now();
         for (PeriodoDia periodo : values()) {
-            // Caso especial para MADRUGADA que cruza a meia-noite
             if (periodo == MADRUGADA) {
                 if (agora.isBefore(periodo.fim) && !agora.isBefore(periodo.inicio)) {
                     return periodo;
@@ -29,7 +28,6 @@ public enum PeriodoDia {
                 return periodo;
             }
         }
-        // Fallback para o segundo exato da meia-noite
         return MADRUGADA;
     }
 }

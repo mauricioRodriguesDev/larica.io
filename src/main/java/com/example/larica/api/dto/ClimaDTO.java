@@ -17,6 +17,6 @@ public class ClimaDTO {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class WeatherInfo {
         @JsonProperty("main")
-        private String main; // Ex: "Rain", "Clear", "Clouds"
+        private String main;
     }
 }
