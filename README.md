@@ -70,3 +70,6 @@ Este projeto foi construído como um estudo de caso prático, demonstrando a apl
 Com a aplicação rodando, a documentação interativa da API (Swagger UI) está disponível em:
 
 [**http://localhost:8080/swagger-ui.html**](http://localhost:8080/swagger-ui.html)
+
+Autor: [mauricioRodriguesDev](https://github.com/mauricioRodriguesDev)
+Linkedin: [Mauricio Rodrigues](https://www.linkedin.com/in/mauriciorodrigues-exe/)
